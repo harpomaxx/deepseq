@@ -108,3 +108,19 @@ Then you create your model using the parameters. This is basically any Keras val
 The last two steps area to add the new model to the list of models and source the the `model_default_keras.R` file in `build_model.R`.
 
     funcs[["default model"]]=keras_model
+
+
+## References
+
+[1] P. Torres, C. Catania, S. Garcia and C. G. Garino, "An analysis of Recurrent Neural Networks for Botnet detection behavior," 2016 IEEE Biennial Congress of Argentina (ARGENCON), Buenos Aires, Argentina, 2016, pp. 1-6, doi: 10.1109/ARGENCON.2016.7585247.
+
+[2] Catania C., García S., Torres P. (2019) Deep Convolutional Neural Networks for DGA Detection. In: Pesado P., Aciti C. (eds) Computer Science – CACIC 2018. CACIC 2018. Communications in Computer and Information Science, vol 995. Springer, Cham.
+
+[3] Palau, Franco, et al. "Detecting DNS Threats: A Deep Learning Model to Rule Them All." XX Simposio Argentino de Inteligencia Artificial (ASAI 2019)-JAIIO 48 (Salta). 2019.
+
+[4] Palau, Franco, et al. "DNS Tunneling: A Deep Learning based Lexicographical Detection Approach." arXiv preprint arXiv:2006.06122 (2020)
+
+ ## Afiliation and support
+* LABSIN (http://labsin.org)
+
+* The work was supported by UNCuyo University, School of Engineering. (http://ingenieria.uncuyo.edu.ar)
