@@ -1,4 +1,4 @@
-Deep Learning Framework for Analysis of Text Sequences in Network Security <img src="deepseqlogo.png" align="right" alt="" width="120" />
+Deep Learning Framework for Analysis of Text Sequences in Network Security <img src="deepseqlogo.png" align="right" alt="" width="300" />
 ======================================================
 
 A set of R scripts for using keras and tf for detecting patterns in text sequences and perform a binary classifcation. The `deepseq_classifier.R` script is the main part of the framework. It is possible to invoke the scripts with several parameters to perform tuning, oversampling, and test a model on a different file.
