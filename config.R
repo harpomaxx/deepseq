@@ -7,9 +7,9 @@
 valid_characters <- "$abcdefghiABCDEFGHIrstuvwxyzRSTUVWXYZ0123456789.,+*"
 
 ## Configuration paths ####
-results_dir='./results/'
-models_dir='./models/'
-datasets_dir='./datasets/'
+results_dir='/home/harpo/deepactivelearning/results/'
+models_dir='/home/harpo/deepactivelearning/models/'
+datasets_dir='/home/harpo/deepactivelearning/datasets/'
 #dataset_default='JISA2018.csv.gz'
 #dataset_default='argencon_vaclav.csv.gz'
 dataset_default=opt$datafile

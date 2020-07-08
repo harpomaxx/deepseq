@@ -20,7 +20,8 @@ source("model_lstm_endgame_recurrent_dropout.R")
 
 # Train model
 train_model <- function(x,y, model,ep=10,modelname="model"){
-  history<-model %>% fit(x,y,epochs = ep, batch_size = 256, validation_split = 0.2,verbose = 2)
+  message(y %>% head(5))
+  history<-model %>% fit(x,y,epochs = ep, batch_size = 256, validation_split = 0.2,verbose = 1)
  # model %>% save_model_hdf5(paste(modelname,".h5",sep=""))
   return(list(model=model,history=history))
 }

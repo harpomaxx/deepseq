@@ -66,10 +66,10 @@ evaluate_model_cv <- function(data,k=5, modelfun = keras_model_cnn_argencon,mode
   for (k in 1:knum){
     
     train_dataset_x<-data$encode[ which(folds !=k ),]
-    train_dataset_y<-ifelse(grepl("Normal",data$label[ which(folds !=k)]) ,0,1)
+    train_dataset_y<-data$class[ which(folds !=k)]
     
     test_dataset_x<-data$encode[ which(folds == k),]
-    test_dataset_y<-ifelse(grepl("Normal",data$label[ which( folds ==k)]),0,1)
+    test_dataset_y<-data$class[ which( folds ==k)]
     
     model_learned<-train_model(x=train_dataset_x,
                                y=train_dataset_y,
@@ -107,9 +107,11 @@ evaluate_model_test <- function(model, test_dataset_x, test_dataset_y, original_
 # 
 evaluate_model_train_test <- function(train_dataset_keras,test_dataset_keras,modelfun = keras_model_cnn_argencon,  model_parameters, experimentname) {
   train_dataset_x<-train_dataset_keras$encode
-  train_dataset_y<-ifelse(grepl("Normal",train_dataset_keras$label) ,0,1)
-  test_dataset_x<-test_dataset_keras$encode
-  test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
+  #train_dataset_y<-ifelse(grepl("Normal",train_dataset_keras$label) ,0,1)
+  train_dataset_y <- train_dataset_keras$class
+  test_dataset_x<- test_dataset_keras$encode
+  test_dataset_y<- test_dataset_keras$class
+  #test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
   model_learned<-train_model(x=train_dataset_x,
                              y=train_dataset_y,
                              model=modelfun(train_dataset_x,
@@ -117,7 +119,7 @@ evaluate_model_train_test <- function(train_dataset_keras,test_dataset_keras,mod
                              modelname=opt$experimenttag
                              
   )
-  model_learned$model %>% save_model_hdf5(paste(opt$experimenttag,"_model.h5",sep=""))
+  model_learned$model %>% save_model_hdf5(paste(models_dir,opt$experimenttag,"_model.h5",sep=""))
   res<-evaluate_model_test(model_learned$model,test_dataset_x,test_dataset_y,test_dataset_keras$label)
   return (list(result=res$result, resultperclass=res$resultperclass,model_learned=model_learned))
 }
@@ -131,61 +133,63 @@ maxlen=opt$maxlen         # the maximum length of the domain name considerd for 
 #dataset<-create_csv("argencon.csv")
 
 if (opt$list_models){
-  print (names(funcs))
+  message (names(funcs))
   quit()
 }
 
 ### Test a previouysly saved model                                        ####
 if (opt$testonly){
-  print("[] Evaluating model on testset")
+  message("[] Evaluating model on testset")
   model<-load_model_hdf5(opt$modelfile) #TODO check missing
   if (!is.null(opt$testfile)){
-  	 print("[] Tokenizing testset")
+  	 message("[] Tokenizing testset")
 	   testset<-read_csv(opt$testfile) #TODO check missing
      test_dataset_keras<-build_dataset(as.matrix(testset),opt$maxlen)
 	   test_dataset_x<-test_dataset_keras$encode
-	   test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
+	   test_dataset_y<-test_dataset_keras$class
+	 #  test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
   }else{
  	 load(file='datasets/.test_dataset_keras.rd')
 	 test_dataset_x<-test_dataset_keras$encode
-	 test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
+	 #test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
+	 test_dataset_y <- test_dataset_keras$class
   }
   results<-evaluate_model_test(model,test_dataset_x,test_dataset_y,test_dataset_keras$label)
-  print("[] Saving results ")
+  message("[] Saving results ")
   write_csv(results$result,col_names = T,path=paste(results_dir,"results_test_",opt$experimenttag,".csv",sep=""))
   write_csv(results$resultperclass,col_names = T,path=paste(results_dir,"results_per_subclass_test_",opt$experimenttag,".csv",sep=""))
   quit()
 }
 
 #### Generate new tokenized datasets from .csv files ##########
-if (!file.exists("datasets/.train_dataset_keras.rd")){
-	print(" []  train and test files not found. Generating")
+if (!file.exists(paste0(datasets_dir,".",dataset_default, "_train_dataset_keras.rd"))){
+	message(" []  train and test files not found. Generating")
 	opt$generate<-TRUE
 }
 
 #### Generate new datasets from csv or load previously generated R objects #######
 if ( opt$generate){
-  print("[] Generating Datasets")
+  message("[] Generating Datasets")
   datasets<-build_train_test(paste(datasets_dir,dataset_default,sep=""),opt$maxlen,upsample=opt$upsample)
   train_dataset_keras<-datasets$train
   test_dataset_keras<-datasets$test
 } else {
-  print("[] Loading Datasets ")
-  load(file='datasets/.train_dataset_keras.rd')
-  load(file='datasets/.test_dataset_keras.rd')
+  message("[] Loading Datasets ")
+  load(file=paste0(datasets_dir,".",dataset_default,"_train_dataset_keras.rd"))
+  load(file=paste0(datasets_dir,".",dataset_default,"_test_dataset_keras.rd"))
 }
 
 
 ###### Tune model hyperparameters, select the best model and save CV results ####
 if (opt$tune){
-  print("[] Tuning model hyperparameters")
+  message("[] Tuning model hyperparameters")
   models_results<-tune_model(dataset=train_dataset_keras,modelid=opt$modelid,experimentname=opt$experimenttag )
   write_csv(models_results,col_names = T,path=paste(results_dir,"results_tuning_",opt$experimenttag,".csv",sep=""))
   selected_parameters<-models_results %>% arrange(desc(value.F1)) %>% select(-value.F1,-value.sd) %>% head(1)
-  print("[] Crossvalidation on best model")
-  print(paste("Using",selected_parameters))
+  message("[] Crossvalidation on best model")
+  message(paste("Using",selected_parameters))
   results<-evaluate_model_cv(modelfun=funcs[[opt$modelid]],model_parameters=selected_parameters,data=train_dataset_keras,k=10,experimentname = opt$experimenttag)
-  print("[] Saving results of best model")
+  message("[] Saving results of best model")
   names(results$result)<-c("k","metric","value")
   write_csv(results$result,col_names = T,path=paste(results_dir,"results_tuning_best_cv",opt$experimenttag,"_cv.csv",sep=""))
   write_csv(results$resultperclass,col_names = T,path=paste(results_dir,"results_per_subclass_tuning_best_cv",opt$experimenttag,"_cv.csv",sep=""))
@@ -193,7 +197,7 @@ if (opt$tune){
 }
 
 ### Train and test a model ####
-print("[] Creating model and evaluating model on test ")
+message("[] Creating model and evaluating model on test ")
 selected_parameters<- 
   eval(
     parse(
@@ -202,7 +206,7 @@ selected_parameters<-
   )
 #results<-evaluate_model_cv(modelfun=funcs[[opt$modelid]],model_parameters=selected_parameters,data=train_dataset_keras,k=5,experimentname = opt$experimenttag)
 results<-evaluate_model_train_test(train_dataset_keras,test_dataset_keras,modelfun=funcs[[opt$modelid]], selected_parameters,opt$experimentname)
-print("[] Saving results ")
+message("[] Saving results ")
 write_csv(results$result,col_names = T,path=paste(results_dir,"results_test_",opt$experimenttag,".csv",sep=""))
 write_csv(results$resultperclass,col_names = T,path=paste(results_dir,"results_per_subclass_test_",opt$experimenttag,".csv",sep=""))
 quit()
