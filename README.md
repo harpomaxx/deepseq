@@ -73,7 +73,7 @@ For a basic invokation of the the script you need to include `--datafile`, and `
 
     bash$ Rscript deepseq_classifier.R --datafile=dataset/ctu13subs.csv --generate -- modelid=3
 
-The number 3 corresponds to the implementation of the LSTM network used in the Woodbridge article. You can list all the available models using the `--list-available-models` parameter. The results of running the model 3 will be found in directory `results/`. By default you should look at the .csv files with the `default-experiment` name. You can optionally set up a different name using the `--experimenttag` parameter.
+The number 3 corresponds to the implementation of the LSTM network used in the [Woodbridge](https://arxiv.org/abs/1611.00791) article. You can list all the available models using the `--list-available-models` parameter. The results of running the model 3 will be found in directory `results/`. By default you should look at the .csv files with the `default-experiment` name. You can optionally set up a different name using the `--experimenttag` parameter.
 
     bash$ Rscript deepseq_classifier.R --datafile=dataset/ctu13subs.csv --generate -- modelid=3 --experimenttag=test-experiment-1
 
