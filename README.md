@@ -8,11 +8,27 @@ The dataset format
 
 Usually, the script accept a CSV file with just two colummn: the text sequence and the class. In this repo two datasets for detecting Botnet based on the [stratosphereIPS](http://stratosphereips.org) behavioral models are available. Namely, the `ctu13subs.csv` and the `ctu19subs.csv`.
 
-    State,class
-    1,00R.A.A.A.A,Botnet
-    1,00000000,Botnet
-    2451z.z.z.z.z.,Normal
+    State,class,label
+    1,00R.A.A.A.A,1
+    1,00000000,1
+    2451z.z.z.z.z.,0
 
+In addition, there is one dataset for DGA detection  `argencon.csv.gz`. 
+
+    domain, class, label
+    www.com,1,dga.bambenek
+    www.google.com,0,normal.alexa
+    
+
+
+
+
+Setup the framework
+----------------------
+The basic setup is done through the `config.R` file. There it is possible to setup the directories where datasets are located as well as the directory where output models and results will be stored.
+
+Finally, the `valid_characters` (AKA the vocabulary) used by the `tokenize()`  function should be included. By default, the example `config.R` file includes the vocabulary used in the Stratosphere IPS Botnet and DGA detection problems.
+    
 Invoking the framework
 ----------------------
 
@@ -124,3 +140,8 @@ The last two steps area to add the new model to the list of models and source th
 * LABSIN (http://labsin.org)
 
 * The work was supported by UNCuyo University, School of Engineering. (http://ingenieria.uncuyo.edu.ar)
+
+ ## Acknowledgements 
+ 
+ Thanks to NVIDIA Corporation GPU GRANT 2019 for Titan V used for developing and testing.
+ 
