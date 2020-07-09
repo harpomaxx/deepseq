@@ -143,5 +143,5 @@ The last two steps area to add the new model to the list of models and source th
 
  ## Acknowledgements 
  
- Thanks to NVIDIA Corporation GPU GRANT 2019 for Titan V used for developing and testing.
+ Thanks to NVIDIA Corporation GPU GRANT 2019 for the Titan V used for developing and testing.
  
