@@ -1,18 +1,34 @@
-Deep Learning Framework for Analysis of Text Sequences in Network Security <img src="deepseqlogo.png" align="right" alt="" width="300" />
+A Minimal Deep Learning Framework for Analysis of Text Sequences in Network Security <img src="deepseq-logo-hexa.png" align="right" alt="" width="150" />
 ======================================================
 
-A set of R scripts for using keras and tf for detecting patterns in text sequences and perform a binary classifcation. The `deepseq_classifier.R` script is the main part of the framework. It is possible to invoke the scripts with several parameters to perform tuning, oversampling, and test a model on a different file.
+A set of R scripts for using [Keras](https://keras.rstudio.com) and tf for detecting patterns in text sequences and perform a binary classifcation. The `deepseq_classifier.R` script is the main part of the framework. It is possible to invoke the scripts with several parameters to perform tuning, oversampling, and test a model on a different file other than the one used for training.
 
 The dataset format
 ------------------
 
 Usually, the script accept a CSV file with just two colummn: the text sequence and the class. In this repo two datasets for detecting Botnet based on the [stratosphereIPS](http://stratosphereips.org) behavioral models are available. Namely, the `ctu13subs.csv` and the `ctu19subs.csv`.
 
-    State,class
-    1,00R.A.A.A.A,Botnet
-    1,00000000,Botnet
-    2451z.z.z.z.z.,Normal
+    State,class,label
+    1,00R.A.A.A.A,1
+    1,00000000,1
+    2451z.z.z.z.z.,0
 
+In addition, there is one dataset for DGA detection  `argencon.csv.gz`. 
+
+    domain, class, label
+    www.com,1,dga.bambenek
+    www.google.com,0,normal.alexa
+    
+
+
+
+
+Setup the framework
+----------------------
+The basic setup is done through the `config.R` file. There it is possible to setup the directories where datasets are located as well as the directory where output models and results will be stored.
+
+Finally, the `valid_characters` (AKA the vocabulary) used by the `tokenize()`  function should be included. By default, the example `config.R` file includes the vocabulary used in the Stratosphere IPS Botnet and DGA detection problems.
+    
 Invoking the framework
 ----------------------
 
@@ -57,7 +73,7 @@ For a basic invokation of the the script you need to include `--datafile`, and `
 
     bash$ Rscript deepseq_classifier.R --datafile=dataset/ctu13subs.csv --generate -- modelid=3
 
-The number 3 corresponds to the implementation of the LSTM network used in the Woodbridge article. You can list all the available models using the `--list-available-models` parameter. The results of running the model 3 will be found in directory `results/`. By default you should look at the .csv files with the `default-experiment` name. You can optionally set up a different name using the `--experimenttag` parameter.
+The number 3 corresponds to the implementation of the LSTM network used in the [Woodbridge](https://arxiv.org/abs/1611.00791) article. You can list all the available models using the `--list-available-models` parameter. The results of running the model 3 will be found in directory `results/`. By default you should look at the .csv files with the `default-experiment` name. You can optionally set up a different name using the `--experimenttag` parameter.
 
     bash$ Rscript deepseq_classifier.R --datafile=dataset/ctu13subs.csv --generate -- modelid=3 --experimenttag=test-experiment-1
 
@@ -124,3 +140,8 @@ The last two steps area to add the new model to the list of models and source th
 * LABSIN (http://labsin.org)
 
 * The work was supported by UNCuyo University, School of Engineering. (http://ingenieria.uncuyo.edu.ar)
+
+ ## Acknowledgements 
+ 
+ Thanks to NVIDIA Corporation GPU GRANT 2019 for the Titan V used for developing and testing.
+ 
