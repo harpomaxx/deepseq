@@ -127,10 +127,7 @@ evaluate_model_train_test <- function(train_dataset_keras,test_dataset_keras,mod
 
 ## MAIN Section                                                                                 #####
 
-#opt$experimenttag='cnn-test' # id used during the experiment. Output file will used either
 maxlen=opt$maxlen         # the maximum length of the domain name considerd for input of the NN
-
-#dataset<-create_csv("argencon.csv")
 
 if (opt$list_models){
   message (names(funcs))
@@ -142,16 +139,18 @@ if (opt$testonly){
   message("[] Evaluating model on testset")
   model<-load_model_hdf5(opt$modelfile) #TODO check missing
   if (!is.null(opt$testfile)){
+    testset<-read_valid_csv(opt$testfile)
+    if(!is.null(testset)){
   	 message("[] Tokenizing testset")
-	   testset<-read_csv(opt$testfile) #TODO check missing
      test_dataset_keras<-build_dataset(as.matrix(testset),opt$maxlen)
 	   test_dataset_x<-test_dataset_keras$encode
 	   test_dataset_y<-test_dataset_keras$class
-	 #  test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
+    }else{ 
+      message("[] Error:")
+      quit() }
   }else{
  	 load(file='datasets/.test_dataset_keras.rd')
 	 test_dataset_x<-test_dataset_keras$encode
-	 #test_dataset_y<-ifelse(grepl("Normal",test_dataset_keras$label) ,0,1)
 	 test_dataset_y <- test_dataset_keras$class
   }
   results<-evaluate_model_test(model,test_dataset_x,test_dataset_y,test_dataset_keras$label)
@@ -170,9 +169,15 @@ if (!file.exists(paste0(datasets_dir,".",dataset_default, "_train_dataset_keras.
 #### Generate new datasets from csv or load previously generated R objects #######
 if ( opt$generate){
   message("[] Generating Datasets")
-  datasets<-build_train_test(paste(datasets_dir,dataset_default,sep=""),opt$maxlen,upsample=opt$upsample)
-  train_dataset_keras<-datasets$train
-  test_dataset_keras<-datasets$test
+  dataset_csv<-paste(datasets_dir,dataset_default,sep="")
+  dataset_df<-read_valid_csv(dataset_csv)
+  if(!is.null(dataset_df)){
+    datasets<-build_train_test(dataset_df,opt$maxlen,upsample=opt$upsample)
+    train_dataset_keras<-datasets$train
+    test_dataset_keras<-datasets$test
+  }else{ 
+    message("[] Error:")
+    quit() }
 } else {
   message("[] Loading Datasets ")
   load(file=paste0(datasets_dir,".",dataset_default,"_train_dataset_keras.rd"))

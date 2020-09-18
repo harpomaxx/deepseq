@@ -2,11 +2,26 @@ library(keras)
 library(purrr)
 
 #valid_characters <- "$abcdefghijklmnopqrstuvwxyz0123456789-_.ABCDEFGHIJKLMNOPQRSTUVWXYZ+*,\""
-valid_characters <- "$abcdefghiABCDEFGHIrstuvwxyzRSTUVWXYZ0123456789.,+*"
-valid_characters_vector <- strsplit(valid_characters,split="")[[1]]
-tokens <- 0:length(valid_characters_vector)
-names(tokens) <- valid_characters_vector
+#valid_characters <- "$abcdefghiABCDEFGHIrstuvwxyzRSTUVWXYZ0123456789.,+*"
+#valid_characters_vector <- strsplit(valid_characters,split="")[[1]]
+#tokens <- 0:length(valid_characters_vector)
+#names(tokens) <- valid_characters_vector
 
+read_valid_csv<-function(data_csv){
+  
+  type_csv <- c("character","integer","character")
+  data<-readr::read_csv(data_csv,col_types  =cols(
+    State = col_character(),
+    class = col_integer(),
+    label = col_character()
+  ))
+  data_type_csv<-sapply(data,class)
+  if (length(data_type_csv)!=3 || (FALSE %in% (data_type_csv == type_csv %>% as.list()))) { 
+    message("[] Wrong file schema. The schema should be <sequence, class, label>")
+    return (NULL)
+  }
+  return (data)
+}
 
 pad_sequences_fast <- function(x, maxlen, padding="pre", truncating ="pre", value=0){
   x %>%
@@ -73,11 +88,7 @@ train_test_sample<-function(x,percent=0.7){
   return (train_ind)
 }
 
-build_train_test<-function(datasetfile,maxlen, upsample = FALSE){
-  dataset<-read_delim(datasetfile,delim = ",")
-  
-  #check if the dataset contains valid class and label columns 
-  
+build_train_test<-function(dataset,maxlen, upsample = FALSE){
   dindex<-train_test_sample(dataset,0.7)
   train_dataset<-dataset[dindex,]
   test_dataset<-dataset[-dindex,]

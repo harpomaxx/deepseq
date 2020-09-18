@@ -94,17 +94,22 @@ opt <- parse_args(OptionParser(option_list=option_list))
 
 
 
-datasetfile="./datasets/ctu13subs75.csv"
-results_dir='./results/'
+datasetfile="../dga-wb-r/datasets/ctu19subs2.csv"
+results_dir='../dga-wb-r/results/'
 
 
 
 
 
 dataset<-read_delim(datasetfile,delim = ",")
+#r<-vectorize_seq(dataset,10)
+#readr::write_csv(cbind(r,dataset$State),path="./juanma.csv")
+#quit()
 dindex<-train_test_sample(dataset,0.7)
 train_dataset<-dataset[dindex,]
 test_dataset<-dataset[-dindex,]
+
+
 
 dataset_train_vectorized<-vectorize_seq(train_dataset,opt$maxlen)
 dataset_test_vectorized<-vectorize_seq(test_dataset,opt$maxlen)
