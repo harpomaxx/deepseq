@@ -130,7 +130,7 @@ evaluate_model_train_test <- function(train_dataset_keras,test_dataset_keras,mod
 maxlen=opt$maxlen         # the maximum length of the domain name considerd for input of the NN
 
 if (opt$list_models){
-  message (names(funcs))
+  print (names(funcs))
   quit()
 }
 

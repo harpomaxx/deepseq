@@ -10,6 +10,7 @@ source("model_dense.R")
 source("model_lstm_endgame_norm.R")
 source("model_lstm_endgame_bi.R")
 source("model_lstm_endgame_recurrent_dropout.R")
+source("model_lstm_endgame_bi_att.R")
 
 # list for selecting between different models
 #funcs<-list( cnn_argencon=keras_model_cnn_argencon,
