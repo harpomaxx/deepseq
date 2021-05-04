@@ -1,4 +1,5 @@
-# keras model used in ENDGAME LSTM 2016 paper + BI directional
+# keras model used in ENDGAME LSTM 2016 paper + BI directional + Attention Layer
+# https://towardsdatascience.com/create-your-own-custom-attention-layer-understand-all-flavours-2201b5e8be9e
 default_keras_model_lstm_endgame_bidirectional_att_parameters_tune=list(
   lstm_size = c(128,64,32),
   embedingdim = c(128,50,32),
@@ -45,7 +46,7 @@ keras_model_lstm_endgame_bidirectional_att<-function(x,parameters=default_keras_
    output <- layer_multiply(list(temp,lstm))
    print("OK")
    
-   output <- output %>% layer_lambda( f = function(x){k_sum(x, axis =1)}) %>%
+   output <- output %>% layer_lambda( f = function(x){k_sum(x, axis =2)}) %>%
       layer_dense(1, activation = 'sigmoid')
   
   
