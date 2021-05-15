@@ -79,9 +79,11 @@ evaluate_model_train_test <- function(train_dataset_keras,test_dataset_keras,mod
                              modelname=opt$experimenttag
                              
   )
-  message("save")
-  model_learned$model %>% save_model_tf(paste(models_dir,opt$experimenttag,"_model.tf",sep=""))
+  message("[]saving model...")
+  model_learned$model %>% save_model_hdf5(paste(models_dir,opt$experimenttag,"_model.h5",sep=""))
+  #model_learned$model %>% keras::export_savedmodel(paste(models_dir,opt$experimenttag,"_model",sep=""),remove_learning_phase=FALSE)
+  
   message("OK")
   res<-evaluate_model_test(model_learned$model,test_dataset_x,test_dataset_y,test_dataset_keras$label)
-  return (list(result=res$result, resultperclass=res$resultperclass,model_learned=model_learned))
+  return (list(result=res$result, resultperclass=res$resultperclass,model_learned=model_learned,history=model_learned$history))
 }

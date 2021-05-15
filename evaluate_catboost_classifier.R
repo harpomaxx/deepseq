@@ -129,14 +129,28 @@ results_dir='../dga-wb-r/results/'
 
 
 dataset<-read_valid_csv(datasetfile)
+
 if(is.null(dataset)){
   message("Error!")
   quit()
 }
-dindex<-train_test_sample(dataset,0.7)
-train_dataset<-dataset[dindex,]
-test_dataset<-dataset[-dindex,]
 
+if(opt$tesfile)
+{
+  testset<-read_valid_csv(opt$testfile)
+  if(is.null(testset)){
+    message("Error!")
+    quit()
+  }
+  
+  train_dataset<-dataset[dindex,]
+  test_dataset<-dataset[-dindex,]
+  
+}else{
+  dindex<-train_test_sample(dataset,0.7)
+  train_dataset<-dataset[dindex,]
+  test_dataset<-dataset[-dindex,]
+}
 
 if (opt$upsample){
   train_dataset<- caret::upSample(x=train_dataset[,c(1,3)], y=as.factor(train_dataset$class),list = F,yname = "class") 

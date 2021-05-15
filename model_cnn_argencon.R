@@ -1,10 +1,10 @@
 # keras model used in ARGECON 2018 (rejected) paper
 
 default_keras_model_cnn_argencon_parameters_tune=list(
-  nb_filter = c(256,128,64,32),
-  kernel_size = c(16,8,4,2),
-  embedingdim = c(100,50,32),
-  hidden_size = c(1024,512,256,128,64)
+  nb_filter = c(256,128,64),
+  kernel_size = c(4,2),
+  embedingdim = c(128,64),
+  hidden_size = c(256,128,64)
 )
 
 #default_keras_model_cnn_argencon_parameters_tune=list(
@@ -41,7 +41,7 @@ keras_model_cnn_argencon<-function(x,parameters=default_keras_model_cnn_argencon
     loss = 'binary_crossentropy',
     metrics = c('accuracy')
   )
-  summary(model)
+  #summary(model)
   return (model)
 }
 # Registering new model

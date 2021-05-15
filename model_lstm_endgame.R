@@ -2,8 +2,8 @@
 
 default_keras_model_lstm_endgame_parameters_tune=list(
   lstm_size = c(128,64,32),
-  embedingdim = c(128,50,32),
-  dropout = c(0.5)
+  embedingdim = c(128,64,32),
+  dropout = c(0.5,0.1)
 )
 
 #default_keras_model_cnn_argencon_parameters_tune=list(
